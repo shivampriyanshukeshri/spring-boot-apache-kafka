@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+
+  kafkaLibrary1:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: kafkaLibrary1
+    hostname: kafkaLibrary1
+    restart: unless-stopped
+
+    ports:
+      - "7092:7092"
+
+    environment:
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafkaLibrary1:7093,2@kafkaLibrary2:7093
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:27092,EXTERNAL://0.0.0.0:7092,CONTROLLER://0.0.0.0:7093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafkaLibrary1:27092,EXTERNAL://localhost:7092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 2
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+
+  kafkaLibrary2:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: kafkaLibrary2
+    hostname: kafkaLibrary2
+    restart: unless-stopped
+
+    ports:
+      - "7093:7092"
+
+    environment:
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_NODE_ID: 2
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafkaLibrary1:7093,2@kafkaLibrary2:7093
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:27092,EXTERNAL://0.0.0.0:7092,CONTROLLER://0.0.0.0:7093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafkaLibrary2:27092,EXTERNAL://localhost:7093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 2
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+
+  topic-init:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: topic-init
+
+    depends_on:
+      - kafkaLibrary1
+      - kafkaLibrary2
+
+    command:
+      - /bin/bash
+      - -c
+      - |
+        echo "Waiting for Kafka brokers..."
+        sleep 60
+
+        kafka-topics --bootstrap-server kafkaLibrary1:27092 \
+          --create --if-not-exists \
+          --topic borrow-init \
+          --partitions 3 \
+          --replication-factor 2
+
+        kafka-topics --bootstrap-server kafkaLibrary1:27092 \
+          --create --if-not-exists \
+          --topic borrowing-successful \
+          --partitions 3 \
+          --replication-factor 2
+
+        kafka-topics --bootstrap-server kafkaLibrary1:27092 \
+          --create --if-not-exists \
+          --topic borrow-request-failed \
+          --partitions 3 \
+          --replication-factor 2
+
+        echo "Topics created successfully"
+
+volumes:
+  kafkaLibrary1-data1:
+  kafkaLibrary2-data1:
