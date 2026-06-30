@@ -13,8 +13,8 @@ public class MessageProducerSrvc implements IMessageProducer{
     public void produceConfirmationMsg(BorrowResponseDTO borrowResponse){
         if(!borrowResponse.getBorrowedBooks().isEmpty()){
             try{
-                BorrowResponseDTO response = new BorrowResponseDTO();
-                response.setBorrowedBooks(borrowResponse.getBorrowedBooks());
+//                BorrowResponseDTO response = new BorrowResponseDTO();
+//                response.setBorrowedBooks(borrowResponse.getBorrowedBooks());
                 this.kafkaTemplate.send("borrowing-successful", borrowResponse)
                         .get();
             }

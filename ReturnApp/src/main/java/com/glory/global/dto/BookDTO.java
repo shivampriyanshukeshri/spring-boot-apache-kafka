@@ -7,7 +7,7 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of={"bookId", "title"})
+@EqualsAndHashCode
 public class BookDTO{
     private Long bookId;
     private String title;

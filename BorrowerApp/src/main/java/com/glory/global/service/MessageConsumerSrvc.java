@@ -25,8 +25,8 @@ public class MessageConsumerSrvc implements IMessageConsumer{
         }
         else{
             BorrowResponseDTO borrowResponse = new BorrowResponseDTO(
-                    borrowRequest.getStudentId(), borrowRequest.getBookIdSet(),
-                    null, null, msg
+                    borrowRequest.getStudentId(), borrowRequest.getBookIdSet(), null,
+                    null, msg
             );
 
             this.messageProducer.produceErrorMsg(borrowResponse);

@@ -3,9 +3,7 @@ package com.glory.global.service;
 import com.glory.global.dto.BookDTO;
 import com.glory.global.dto.ReturnRequestDTO;
 import com.glory.global.dto.ReturnResponseDTO;
-import com.glory.global.entity.Book;
 import com.glory.global.entity.Student;
-import com.glory.global.repo.StudentRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +38,7 @@ public class ReturnService implements IReturnService{
         else reqStudent = reqStudentContainer.get();
 
         Set<BookDTO> yetToBeReturnedBooks = this.inventoryService.yetToBeReturnedBookSet(returnRequest.getStudentId(),
-                returnRequest.getBookIdSet());
+                bookIdSet);
 
         if(yetToBeReturnedBooks == null){
             returnResponse.setMsg("DATABASE_EXCEPTION");
@@ -51,7 +49,7 @@ public class ReturnService implements IReturnService{
                 try{
                     this.inventoryService.returnBook(reqStudent, bookId);
 
-                    String bookTitle = this.inventoryService.getBookTitleBookId(bookId);
+                    String bookTitle = this.inventoryService.getBookTitleByBookId(bookId);
 
                     if(bookTitle == null)
                         unreturnedBookIdsMap.putIfAbsent(bookId, "BOOKID_NOT_FOUND");
@@ -72,6 +70,7 @@ public class ReturnService implements IReturnService{
             }
 
             returnResponse.setReturnedBooks(returnedBooksSet);
+            yetToBeReturnedBooks.removeAll(returnedBooksSet);
             returnResponse.setYetToReturnBooks(yetToBeReturnedBooks);
             returnResponse.setUnreturnedBookIdsMap(unreturnedBookIdsMap);
 

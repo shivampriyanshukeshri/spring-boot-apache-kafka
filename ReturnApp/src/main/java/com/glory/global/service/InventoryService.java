@@ -21,7 +21,7 @@ public class InventoryService implements IInventoryService{
     @Autowired BookRepo bookRepo;
 
     @Override
-    public String getBookTitleBookId(Long bookId) throws Exception{
+    public String getBookTitleByBookId(Long bookId) throws Exception{
         try{
             Optional<Book> reqBookContainer = this.bookRepo.findById(bookId);
 

@@ -9,6 +9,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 @Service
 public class MessageConsumerService implements IMessageConsumerService{
     @Autowired private IReturnService returnService;
+    @Autowired private IMessageProducerService messageProducer;
 
     @KafkaListener(topics="return-init", groupId="library-inventory-group")
     @Override
@@ -16,19 +17,17 @@ public class MessageConsumerService implements IMessageConsumerService{
         String msg = this.returnRequestValidator(returnRequest).getMsg();
 
         if(msg.equals("Validation Successful")){
-            ReturnResponseDTO borrowResponse = this.returnService.returnBook(returnRequest);
+            ReturnResponseDTO returnResponse = this.returnService.returnBook(returnRequest);
 
-            if(borrowResponse.getMsg() != null)
-                this.messageProducer.produceErrorMsg(borrowResponse);
-            else this.messageProducer.produceConfirmationMsg(borrowResponse);
+            if(returnResponse.getMsg() != null)
+                this.messageProducer.produceErrorMsg(returnResponse);
+            else this.messageProducer.produceConfirmationMsg(returnResponse);
         }
         else{
-            BorrowResponseDTO borrowResponse = new BorrowResponseDTO(
-                    borrowRequest.getStudentId(), borrowRequest.getBookIdSet(),
-                    null, null, msg
-            );
+            ReturnResponseDTO returnResponse = new ReturnResponseDTO(returnRequest.getStudentId(),
+                    returnRequest.getBookIdSet());
 
-            this.messageProducer.produceErrorMsg(borrowResponse);
+            this.messageProducer.produceErrorMsg(returnResponse);
         }
     }
 

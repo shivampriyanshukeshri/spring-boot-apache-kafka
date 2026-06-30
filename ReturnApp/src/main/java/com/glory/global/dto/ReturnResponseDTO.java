@@ -17,4 +17,9 @@ public class ReturnResponseDTO{
     Map<Long, String> unreturnedBookIdsMap;
     private Set<BookDTO> yetToReturnBooks;
     private String msg;
+
+    public ReturnResponseDTO(Long studentId, Set<Long> bookIdSet){
+        this.studentId = studentId;
+        this.bookIdSet = bookIdSet;
+    }
 }
