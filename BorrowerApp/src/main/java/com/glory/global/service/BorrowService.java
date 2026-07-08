@@ -46,7 +46,8 @@ public class BorrowService implements IBorrowService{
                 unborrowedBooks.put(bookId, "BOOK_UNAVAILABLE");
             else{
                 try{
-                    if(this.inventoryService.isBorrowingPossible(borrowRequest.getStudentId(), bookId))
+                    if(this.inventoryService.isBorrowingPossible(borrowRequest.getStudentId(),
+                            reqBookContainer.get().getTitle()))
                         availableBooks.add(reqBookContainer.get());
                     else unborrowedBooks.putIfAbsent(bookId, "YET_TO_RETURN_BOOK_WITH_BOOKID_" + bookId);
                 }
@@ -56,7 +57,7 @@ public class BorrowService implements IBorrowService{
 
         for(BookDTO book: availableBooks){
             try{
-                this.inventoryService.borrowBook(reqStudent, book);
+                book.setSlNo(this.inventoryService.borrowBook(reqStudent, book));
                 book.setBooksLeft(book.getBooksLeft() - 1);
             }
             catch(Exception e) {unborrowedBooks.putIfAbsent(book.getBookId(), "DATABASE_EXCEPTION");}

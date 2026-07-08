@@ -16,6 +16,7 @@ public class MessageProducerSrvc implements IMessageProducer{
         borrowRequest.setMsg("BORROW_REQUEST_INITIATED");
 
         try{
+            borrowRequest.setMsg("BORROW_INIT_MESSAGE_SUCCESS");
             this.borrowTemplate.send("borrow-init", borrowRequest).get();
             return "BORROW_INIT_MESSAGE_SUCCESS";
         }
@@ -27,14 +28,16 @@ public class MessageProducerSrvc implements IMessageProducer{
 
     @Override
     public String produceReturnInitMsg(ReturnRequestDTO returnRequest) {
-        returnRequest.setMsg("RETURN_REQUEST_INITIATED");
+        //returnRequest.setMsg("RETURN_REQUEST_INITIATED");
 
         try{
             this.returnTemplate.send("return-init", returnRequest).get();
+            returnRequest.setMsg("RETURN_REQUEST_INITIATED");
             return "RETURN_INIT_MESSAGE_SUCCESS";
         }
         catch (Exception e){
             e.printStackTrace();
+            returnRequest.setMsg("RETURN_REQUEST_INITTATION_FAILED");
             return "RETURN_INIT_MESSAGE_FAIL";
         }
     }

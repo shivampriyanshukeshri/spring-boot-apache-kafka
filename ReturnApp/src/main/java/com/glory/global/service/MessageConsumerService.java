@@ -34,8 +34,8 @@ public class MessageConsumerService implements IMessageConsumerService{
     private ReturnRequestDTO returnRequestValidator(ReturnRequestDTO returnRequest){
         if(returnRequest.getStudentId() == null)
             returnRequest.setMsg("Validation Failed: Student ID can't be null");
-        else if(returnRequest.getBookIdSet().isEmpty())
-            returnRequest.setMsg("Validation Failed: Book IDs can't be null");
+        else if(returnRequest.getBookIdSlNoMap() == null || returnRequest.getBookIdSlNoMap().isEmpty())
+            returnRequest.setMsg("Validation Failed: There is no pair of Book Id and Serial No. given");
         else returnRequest.setMsg("Validation Successful");
 
         return returnRequest;

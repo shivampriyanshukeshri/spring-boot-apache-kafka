@@ -1,6 +1,7 @@
 package com.glory.global.service;
 
 import com.glory.global.dto.BookDTO;
+import com.glory.global.dto.BookSlNoDTO;
 import com.glory.global.dto.ReturnResponseDTO;
 import com.glory.global.entity.AllTransactions;
 import com.glory.global.entity.Book;
@@ -39,15 +40,15 @@ public class InventoryService implements IInventoryService{
     }
 
     @Override
-    public Set<BookDTO> yetToBeReturnedBookSet(Long studentId, Set<Long> bookIdSet){
+    public Set<BookDTO> yetToBeReturnedBookSet(Long studentId, Map<Long, Long> bookIdSlNoMap){
         try{
-            List<Book> yetToBeReturnedBooks = this.allTransactionsRepo.findYetToBeReturnedBooksByStudentId(studentId,
-                    new ArrayList<>(bookIdSet));
+            List<BookSlNoDTO> yetToBeReturnedBooks = this.allTransactionsRepo.findYetToBeReturnedBooksByStudentId(studentId,
+                    new ArrayList<>(bookIdSlNoMap.values()));
 
             Set<BookDTO> stillNotReturnedBooks = new HashSet<>();
 
-            for(Book book: yetToBeReturnedBooks){
-                BookDTO bookDTO = new BookDTO(book.getBookId(), book.getTitle());
+            for(BookSlNoDTO it: yetToBeReturnedBooks){
+                BookDTO bookDTO = new BookDTO(it.getBook().getBookId(), it.getBook().getTitle(), it.getSlNo());
                 stillNotReturnedBooks.add(bookDTO);
             }
 
@@ -57,12 +58,15 @@ public class InventoryService implements IInventoryService{
     }
 
     @Override
-    public Long isReturnPossible(Long studentId, Long bookId) throws Exception{
+    public Boolean isReturnPossible(Long studentId, Long bookId, Long slNo) throws Exception{
         Optional<AllTransactions> reqTransactionDataContainer = Optional.empty();
 
         try{
-            reqTransactionDataContainer = this.allTransactionsRepo.findByStudentStudentIdAndBookBookId(studentId,
-                    bookId);
+//            reqTransactionDataContainer = this.allTransactionsRepo.findByStudentStudentIdAndBookBookId(studentId,
+//                    bookId);
+
+            return this.allTransactionsRepo.isReturnPossible(studentId, bookId, slNo) == 1;
+
         }
         catch(Exception e) {throw new Exception("DATABASE_EXCEPTION");}
 

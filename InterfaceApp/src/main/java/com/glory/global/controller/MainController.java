@@ -77,11 +77,40 @@ public class MainController{
         else return new ResponseEntity<>(returnRequest, HttpStatus.BAD_REQUEST);
     }
 
+//    @GetMapping("/respondReturnRequest/{studentId}")
+//    public ResponseEntity<BorrowResponseContainer> respondReturnRequest(@PathVariable Long studentId){
+//        if(studentId == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//
+//        try{
+//            BorrowResponseContainer container = new BorrowResponseContainer();
+//
+//            Map<Long, BorrowResponseDTO> successfulBorrowResponses = this.persistenceStore.getSuccessfulBorrowResponses();
+//            Map<Long, BorrowResponseDTO> failedBorrowResponses = this.persistenceStore.getFailedBorrowResponses();
+//
+//            if (successfulBorrowResponses.containsKey(studentId)){
+//                container.setSuccessfulBorrowResponse(successfulBorrowResponses.get(studentId));
+//
+//                successfulBorrowResponses.remove(studentId);
+//            }
+//
+//            if (failedBorrowResponses.containsKey(studentId)){
+//                container.setFailedBorrowResponse(failedBorrowResponses.get(studentId));
+//
+//                failedBorrowResponses.remove(studentId);
+//            }
+//
+//            return new ResponseEntity<>(container, HttpStatus.OK);
+//        }
+//        catch(Exception e){
+//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
     private BorrowRequestDTO borrowRequestValidator(BorrowRequestDTO borrowRequest){
         if(borrowRequest.getStudentId() == null)
             borrowRequest.setMsg("Validation Failed: Student ID can't be null");
-        else if(borrowRequest.getBookIdSet().isEmpty())
-            borrowRequest.setMsg("Validation Failed: Book IDs can't be null");
+        else if(borrowRequest.getBookIdSet() == null || borrowRequest.getBookIdSet().isEmpty())
+            borrowRequest.setMsg("Validation Failed: There are no Book ids given");
         else borrowRequest.setMsg("Validation Successful");
 
         return borrowRequest;
@@ -91,7 +120,7 @@ public class MainController{
         if(returnRequest.getStudentId() == null)
             returnRequest.setMsg("Validation Failed: Student ID can't be null");
         else if(returnRequest.getBookIdSet().isEmpty())
-            returnRequest.setMsg("Validation Failed: Book IDs can't be null");
+            returnRequest.setMsg("Validation Failed: There are no Book ids given");
         else returnRequest.setMsg("Validation Successful");
 
         return returnRequest;

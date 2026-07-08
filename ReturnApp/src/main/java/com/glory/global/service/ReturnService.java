@@ -19,11 +19,11 @@ public class ReturnService implements IReturnService{
         Map<Long, String> unreturnedBookIdsMap = new HashMap<>();
         Set<BookDTO> returnedBooksSet = new HashSet<>();
 
-        Set<Long> bookIdSet = returnRequest.getBookIdSet();
+        Map<Long, Long> bookIdSlNoMap = returnRequest.getBookIdSlNoMap();
 
-        ReturnResponseDTO returnResponse = new ReturnResponseDTO();
-        returnResponse.setStudentId(returnRequest.getStudentId());
-        returnResponse.setBookIdSet(bookIdSet);
+        ReturnResponseDTO returnResponse = new ReturnResponseDTO(returnRequest.getStudentId(), bookIdSlNoMap);
+//        returnResponse.setStudentId(returnRequest.getStudentId());
+//        returnResponse.setBookIdSet(bookIdSet);
 
         Optional<Student> reqStudentContainer = this.inventoryService.studentExists(returnRequest.getStudentId());
 
@@ -38,15 +38,16 @@ public class ReturnService implements IReturnService{
         else reqStudent = reqStudentContainer.get();
 
         Set<BookDTO> yetToBeReturnedBooks = this.inventoryService.yetToBeReturnedBookSet(returnRequest.getStudentId(),
-                bookIdSet);
+                bookIdSlNoMap);
 
         if(yetToBeReturnedBooks == null){
             returnResponse.setMsg("DATABASE_EXCEPTION");
             return returnResponse;
         }
         else{
-            for(Long bookId: bookIdSet){
+            for(Map.Entry<Long, Long> entry: bookIdSlNoMap.entrySet()){
                 try{
+                    this.inventoryService
                     this.inventoryService.returnBook(reqStudent, bookId);
 
                     String bookTitle = this.inventoryService.getBookTitleByBookId(bookId);

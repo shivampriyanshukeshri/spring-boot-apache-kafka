@@ -1,5 +1,6 @@
 package com.glory.global.dto;
 
+import com.glory.global.entity.Book;
 import lombok.*;
 
 @Setter
@@ -7,9 +8,7 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-public class BookDTO{
-    private Long bookId;
-    private String title;
+public class BookSlNoDTO{
+    private Book book;
     private Long slNo;
 }

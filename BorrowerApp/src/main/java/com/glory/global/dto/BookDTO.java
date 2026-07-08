@@ -6,9 +6,10 @@ import lombok.*;
 @Getter
 @ToString
 @NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BookDTO{
-    private Long bookId;
-    private String title;
-    private Integer booksLeft;
+    @NonNull private Long bookId;
+    @NonNull private String title;
+    private Long slNo;
+    @NonNull private Integer booksLeft;
 }

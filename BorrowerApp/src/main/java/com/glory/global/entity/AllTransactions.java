@@ -24,6 +24,10 @@ public class AllTransactions{
     @JoinColumn(name="book_id", nullable=false)
     private Book book;
 
+    @Column
+    @GeneratedValue(strategy=GenerationType.SEQUENCE)
+    private Long slNo;
+
     @Column(nullable=false)
     private Integer isBorrowed = 0;
 

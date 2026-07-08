@@ -9,3 +9,6 @@ public class InterfaceAppApplication{
 		SpringApplication.run(InterfaceAppApplication.class, args);
 	}
 }
+
+//You were looking into the returnBook() method of ReturnService Class of ReturnApp
+//Continue looking into the isReturnPossible() method of InventoryService Class of ReturnApp

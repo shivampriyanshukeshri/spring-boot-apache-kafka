@@ -1,8 +1,6 @@
 package com.glory.global.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Map;
 import java.util.Set;
@@ -10,16 +8,18 @@ import java.util.Set;
 @Setter
 @Getter
 @ToString
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class ReturnResponseDTO{
-    private Long studentId;
-    private Set<Long> bookIdSet;
+    @NonNull private Long studentId;
+    @NonNull private Map<Long, Long> bookIdSlNoMap;
     private Set<BookDTO> returnedBooks;
     Map<Long, String> unreturnedBookIdsMap;
     private Set<BookDTO> yetToReturnBooks;
     private String msg;
 
-    public ReturnResponseDTO(Long studentId, Set<Long> bookIdSet){
-        this.studentId = studentId;
-        this.bookIdSet = bookIdSet;
-    }
+//    public ReturnResponseDTO(Long studentId, Set<Long> bookIdSet){
+//        this.studentId = studentId;
+//        this.bookIdSet = bookIdSet;
+//    }
 }

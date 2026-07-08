@@ -47,7 +47,7 @@ public class InventoryService implements IInventoryService{
 
     @Transactional
     @Override
-    public Boolean borrowBook(Student reqStudent, BookDTO reqBook) throws Exception{
+    public Long borrowBook(Student reqStudent, BookDTO reqBook) throws Exception{
         try{
             this.bookRepo.borrowBook(reqBook.getBookId());
 
@@ -56,9 +56,9 @@ public class InventoryService implements IInventoryService{
             AllTransactions transaction = new AllTransactions(reqStudent, bookContainer.get(), 1, 0);
             transaction.setBorrowDate(new Date());
 
-            this.allTransactionsRepo.save(transaction);
+            AllTransactions savedTransaction = this.allTransactionsRepo.save(transaction);
 
-            return true;
+            return savedTransaction.getSlNo();
         }
         catch(Exception e){
             throw new Exception("DatabaseException: " + reqBook.getBookId());
@@ -66,14 +66,17 @@ public class InventoryService implements IInventoryService{
     }
 
     @Override
-    public Boolean isBorrowingPossible(Long studentId, Long bookId) throws Exception{
+    public Boolean isBorrowingPossible(Long studentId, String bookTitle) throws Exception{
         Optional<AllTransactions> reqTransactionDataContainer = Optional.empty();
 
         try{
             reqTransactionDataContainer = this.allTransactionsRepo.
-                    findByStudentStudentIdAndBookBookId(studentId, bookId);
+                    findByStudentStudentIdAndBookTitle(studentId, bookTitle);
         }
-        catch(Exception e){throw new Exception("DatabaseException: " + bookId);}
+        catch(Exception e){
+            //throw new Exception("DatabaseException: " + bookId);
+            throw new Exception("DatabaseException");
+        }
 
         if(reqTransactionDataContainer.isEmpty()) return true;
 
